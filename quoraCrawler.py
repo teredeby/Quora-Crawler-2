@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 import os
@@ -24,8 +25,9 @@ def crawlTopicHierarchy():
     # Add root to stack
     urls_to_visit.append([url, depth])
 
-    #if (DEBUG): print urls_to_visit
-
+    if (DEBUG): print (urls_to_visit)
+    print ("passei por aqui")
+    print(len(urls_to_visit))
     while (len(urls_to_visit)):
         # Pop stack of stack to get URL and current depth
         url, current_depth = urls_to_visit.pop()
@@ -57,7 +59,9 @@ def crawlTopicHierarchy():
 
         chromedriver = "chromedriver"   # Needed?
         os.environ["webdriver.chrome.driver"] = chromedriver    # Needed?
-        browser = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(options=options)
         browser.get(url_about)
 
         # Fetch /about page
@@ -71,9 +75,9 @@ def crawlTopicHierarchy():
 
         html_source = browser.page_source
 
-        soup = BeautifulSoup(html_source)
+        soup = BeautifulSoup(html_source, features="html.parser")
         raw_topics = soup.find_all(attrs={"class":"topic_name"})
-        #print raw_topics
+        #print (raw_topics)
 
         # Split to get just child topics
         split_html = html_source.split('<strong>Child Topics</strong>')
@@ -126,7 +130,9 @@ def crawlTopicQuestions(topic_urls):
         # Open browser
         chromedriver = "chromedriver"   # Needed?
         os.environ["webdriver.chrome.driver"] = chromedriver    # Needed?
-        browser = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(options=options)
         browser.get(current_url)
 
         # Fetch current page
@@ -178,7 +184,9 @@ def crawlQuestionData(file):
         # Open browser to current_question_url
         chromedriver = "chromedriver"   # Needed?
         os.environ["webdriver.chrome.driver"] = chromedriver    # Needed?
-        browser = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(options=options)
         browser.get(question_id)
     
         # Fetch page
@@ -303,7 +311,9 @@ def crawlUser():
         # Open browser to current_question_url
         chromedriver = "chromedriver"   # Needed?
         os.environ["webdriver.chrome.driver"] = chromedriver    # Needed?
-        browser = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(options=options)
         browser.get(current_line)
         
         # Fetch page
@@ -348,7 +358,9 @@ def crawlUser():
         
         # Find followers
         followers_url = user_id.split('?')[0] + "/followers?share=1"
-        browser = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(options=options)
         browser.get(followers_url)
 
         src_updated = browser.page_source
@@ -381,7 +393,9 @@ def crawlUser():
 
         # Find following
         following_url = user_id.split('?')[0] + "/following?share=1"
-        browser = webdriver.Chrome()
+        options = Options()
+        options.headless = True
+        browser = webdriver.Chrome(options=options)
         browser.get(following_url)
         
         src_updated = browser.page_source
